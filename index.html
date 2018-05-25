@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <meta charset="utf-8">
+  <meta name=viewport content="width=device-width, initial-scale=1"/>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="shortcut icon" href="images/icon/icon.png">
+  <meta name="theme-color" content="#ffffff" />
+  <title>Restaurant Reviews</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <h1 role="banner"><a href="index.html">Restaurant Reviews</a></h1>
+    </nav>
+  </header>
+
+  <main id="maincontent">
+    <section id="map-container">
+      <div id="map" role="application"></div>
+    </section>
+    <section>
+      <div class="filter-options">
+        <h2>Filter Results</h2>
+        <select id="neighborhoods-select" aria-label= "Neighborhoods" name="neighborhoods" onchange="updateRestaurants()">
+          <option value="all">All Neighborhoods</option>
+        </select>
+        <select id="cuisines-select" aria-label= "Cuisines" name="cuisines" onchange="updateRestaurants()">
+          <option value="all">All Cuisines</option>
+        </select>
+      </div>
+      <div class="container">
+        <ul tabindex = "0" aria-label= "lista ristoranti" id="restaurants-list" role="directory"></ul>
+      </div>
+    </section>
+  </main>
+  <script type="text/javascript" src="js/idb.js"></script>
+  <script type="text/javascript" src="js/dbhelper.js"></script>
+  <script type="text/javascript" src="js/echo.min.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap"></script>
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHm2lMYAXkdf6tLY1X90_E3b4ankG0Mdw&libraries=places&callback=initMap"></script>
+  -->
+  <footer id="footer">
+    Copyright (c) 2017 <a><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+  </footer>
+</body>
+</html>

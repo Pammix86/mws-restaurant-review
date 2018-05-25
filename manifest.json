@@ -1,0 +1,28 @@
+
+{
+    "name": "Restaurant Reviews",
+    "short_name": "Restaurant",
+    "description": "Restaurant Reviews PWA",
+    "display": "standalone",
+    "scope": ".",
+    "start_url": "/index.html",
+    "orientation": "portrait",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+    "icons": [{
+        "src": "/images/icon/icon.png",
+        "sizes": "144x144",
+        "type": "image/png"
+      },
+      {
+        "src": "/images/icon/icon_512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/images/icon/icon_256.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      }]
+    }
+  
