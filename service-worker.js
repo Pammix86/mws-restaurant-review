@@ -1,3 +1,4 @@
+self.importScripts("/js/idb.js");
 var cacheName = 'restaurantApp-5';
 
 var filesToCache = [
@@ -61,4 +62,47 @@ self.addEventListener('activate', function(e) {
       })
     );
   });
-  
+  self.addEventListener('sync', function (e) {
+    if (e.tag === 'sync') {
+      e.waitUntil(
+        sendReviews().then(() => {
+          console.log('synced');
+        }).catch(err => {
+          console.log(err, 'error syncing');
+        })
+      );
+    }});
+
+    function sendReviews() {
+      return idb.open('Restaurant Reviews', 4).then(db => {
+        let tx = db.transaction('outbox', 'readonly');
+        return tx.objectStore('outbox').getAll();
+      }).then(reviews => {
+        return Promise.all(reviews.map(review => {
+          let reviewID = review.id;
+          delete review.id;
+          console.log("sending review....", review);
+          // POST review
+          return fetch('http://localhost:1337/reviews', {
+            method: 'POST',
+            body: JSON.stringify(review),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          }).then(response => {
+            console.log(response);
+            return response.json();
+          }).then(data => {
+            console.log('added review!', data);
+            if (data) {
+              // delete from db
+              idb.open('Restaurant Reviews', 4).then(db => {
+                let tx = db.transaction('outbox', 'readwrite');
+                return tx.objectStore('outbox').delete(reviewID);
+              });
+            }
+          });
+        }));
+      });
+    }

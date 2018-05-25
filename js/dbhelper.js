@@ -14,10 +14,30 @@ class DBHelper {
     return `http://localhost:${port}/restaurants/`;
   }
   static openDatabase() {
-    return idb.open('restaurants' , 1  , function(upgradeDb) {
-      upgradeDb.createObjectStore('restaurants' ,{keyPath: 'id'});
-    });
-  }
+  return idb.open('Restaurant Reviews', 4, (upgradeDBObject) => {
+    switch (upgradeDBObject.oldVersion) {
+      case 0:
+        upgradeDBObject.createObjectStore('restaurants', {
+          keyPath: 'id'
+        });
+      case 1:
+        upgradeDBObject.createObjectStore('restaurant-reviews', {
+          keyPath: 'id'
+        });
+        case 2:
+        upgradeDBObject.createObjectStore('outbox', {
+          autoIncrement: true, 
+          keyPath: 'id' 
+        });
+    }
+  })
+}
+//OLD Version 
+  // static openDatabase() {
+  //   return idb.open('restaurants' , 1  , function(upgradeDb) {
+  //     upgradeDb.createObjectStore('restaurants' ,{keyPath: 'id'});
+  //   });
+  // }
   static getCachedMessages(){
     dbPromise = DBHelper.openDatabase();
     return dbPromise.then(function(db){
@@ -225,5 +245,19 @@ class DBHelper {
     );
     return marker;
   }
-
+  static fetchReviewsForRestaurant(id, callback) {
+    fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(response => {
+      if (response.status === 200) {
+        response.json().then(json => {
+          callback(null, json);
+        }).catch(err => {
+          callback(err, null);
+        });
+      } else {
+        callback(`Request failed. Returned status of ${response.status}`, null);
+      }
+    }).catch(err => {
+      callback(err, null);
+    });
+  }
 }

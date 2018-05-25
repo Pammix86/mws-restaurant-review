@@ -19,7 +19,24 @@ window.initMap = () => {
     }
   });
 }
-
+/*
+ * fetch reviews
+ */
+fetchReviews = () => {
+  const id = getParameterByName('id');
+  if (!id) {
+    console.log('No ID in URL');
+    return;
+  }
+  DBHelper.fetchReviewsForRestaurant(id, (err, reviews) => {
+    self.reviews = reviews;
+    if (err || !reviews) {
+      console.log('reviews fetch error', err);
+      return;
+    }
+    fillReviewsHTML(reviews);
+  });
+}
 /**
  * Get current restaurant from page URL.
  */
@@ -69,7 +86,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  //fillReviewsHTML();
+   fetchReviews();
 }
 
 /**
@@ -141,6 +159,39 @@ createReviewHTML = (review) => {
 
   return li;
 }
+/* Managing reviews */
+navigator.serviceWorker.ready.then(function (swRegistration) {
+  let form = document.querySelector('#review-form');
+  // listen to submit event
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    let rating = form.querySelector('#rating');
+    let review = {
+      restaurant_id: getParameterByName('id'),
+      name: form.querySelector('#name').value,
+      rating: rating.options[rating.selectedIndex].value,
+      comments: form.querySelector('#comment').value
+    };
+    console.log(review);
+    // save to DB
+    
+    DBHelper.openDatabase().then(function(db){
+      var transaction = db.transaction('outbox', 'readwrite');
+      return transaction.objectStore('outbox').put(review);
+    }).then(function () {
+      form.reset();
+      // register for sync and clean up the form
+      return swRegistration.sync.register('sync').then(() => {
+        console.log('Sync registered');
+        // add review to view (for better UX)
+        // const ul = document.getElementById('reviews-list');
+        // review.createdAt = new Date();
+        // ul.appendChild(createReviewHTML(review));
+      });
+    });
+    // finish
+  });
+});
 
 /**
  * Add restaurant name to the breadcrumb navigation menu
