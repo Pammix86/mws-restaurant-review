@@ -61,14 +61,20 @@ self.addEventListener('activate', function(e) {
         return response || fetch(e.request);
       })
     );
+    sendReviews().then((data) => {
+      if (navigator.onLine && data.length >0){
+      console.log('Offline Data synced');
+      }
+    });
   });
+
   self.addEventListener('sync', function (e) {
     if (e.tag === 'sync') {
       e.waitUntil(
         sendReviews().then(() => {
           console.log('synced');
         }).catch(err => {
-          console.log(err, 'error syncing');
+          console.log(err, 'No Network connection, data will be syncing when online ');
         })
       );
     }});

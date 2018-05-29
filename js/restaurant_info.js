@@ -189,9 +189,11 @@ navigator.serviceWorker.ready.then(function (swRegistration) {
       return transaction.objectStore('outbox').put(review);
      
     }).then(function () {
+      if (navigator.onLine){
       const ul = document.getElementById('reviews-list');
       review.createdAt = new Date(); 
         ul.appendChild(createReviewHTML(review));
+      }
       form.reset();
       //TODO Verificare 
       // register for sync and clean up the form
