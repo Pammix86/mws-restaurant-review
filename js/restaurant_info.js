@@ -29,12 +29,13 @@ fetchReviews = () => {
     return;
   }
   DBHelper.fetchReviewsForRestaurant(id, (err, reviews) => {
-    self.reviews = reviews;
+  //  self.reviews = reviews;
+  self.restaurant.reviews = reviews;
     if (err || !reviews) {
       console.log('reviews fetch error', err);
       return;
     }
-    fillReviewsHTML(reviews);
+    fillReviewsHTML();
   });
 }
 /**
@@ -131,7 +132,10 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   });
   container.appendChild(ul);
 }
-
+formatDate = (ts) => {
+  let date = new Date(ts);
+  return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+}
 /**
  * Create review HTML and add it to the webpage.
  */
@@ -142,10 +146,14 @@ createReviewHTML = (review) => {
   name.className = 'reviewerName';
   li.appendChild(name);
 
+  // const date = document.createElement('p');
+  // date.innerHTML = review.date;
+  // date.className = 'date';
+  // li.appendChild(date);
+
   const date = document.createElement('p');
-  date.innerHTML = review.date;
-  date.className = 'date';
-  li.appendChild(date);
+  date.innerHTML = formatDate(review.createdAt);
+  li.appendChild(date)
 
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
@@ -159,6 +167,7 @@ createReviewHTML = (review) => {
 
   return li;
 }
+
 /* Managing reviews */
 navigator.serviceWorker.ready.then(function (swRegistration) {
   let form = document.querySelector('#review-form');
@@ -178,8 +187,13 @@ navigator.serviceWorker.ready.then(function (swRegistration) {
     DBHelper.openDatabase().then(function(db){
       var transaction = db.transaction('outbox', 'readwrite');
       return transaction.objectStore('outbox').put(review);
+     
     }).then(function () {
+      const ul = document.getElementById('reviews-list');
+      review.createdAt = new Date(); 
+        ul.appendChild(createReviewHTML(review));
       form.reset();
+      //TODO Verificare 
       // register for sync and clean up the form
       return swRegistration.sync.register('sync').then(() => {
         console.log('Sync registered');
