@@ -136,7 +136,7 @@ header nav h1 a {
 .filter-options {
   width: 100%;
   min-height: 100px;
-  background-color: #3397DB;
+  background-color: #090098;
   align-items: center;
   order: 1;
 }
@@ -396,8 +396,7 @@ padding-right: 15px;
    border: 2px solid orange;
     font-size: 2em;
     border-radius: 4px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 5px 20px;
 }
 
 /* ====================== Media Queries ====================== */
