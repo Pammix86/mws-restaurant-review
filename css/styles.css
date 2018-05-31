@@ -318,7 +318,7 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   
   width: 30%;
   padding: 4px;
-  margin: 20px 20px;
+  margin: 10px 20px;
   text-transform: uppercase;
   color: orange;
   font-size: 1.2em;
@@ -327,6 +327,12 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 #reviews-list li p.reviewerName {
   margin-top: 10px;
   font-style: oblique;
+  padding-left: 10px;
+  font-size: 1.4em;
+}
+#reviews-list li p.dateReview {
+text-align: right;
+padding-right: 15px;
 }
 #reviews-list li p.comments {
   margin: 0 20px;
@@ -361,9 +367,10 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 #name, #comment, #rating {
   display: block;
   margin-top: 8px;
-  border-color: orange !important;
   height: 30px;
   width: 50%;
+  border: 2px solid orange !important;
+  font-size: 1.2em;
 }
 
 #comment {
@@ -415,7 +422,7 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   #name, #comment, #rating {
     display: block;
     margin-top: 8px;
-    border-color: orange !important;
+    border: 2px solid orange !important;
     height: 30px;
     width: 90%;
   }
