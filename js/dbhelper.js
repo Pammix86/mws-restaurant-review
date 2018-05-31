@@ -14,7 +14,7 @@ class DBHelper {
     return `http://localhost:${port}/restaurants/`;
   }
   static openDatabase() {
-  return idb.open('Restaurant Reviews', 4, (upgradeDBObject) => {
+  return idb.open('Restaurant Reviews', 5, (upgradeDBObject) => {
     switch (upgradeDBObject.oldVersion) {
       case 0:
         upgradeDBObject.createObjectStore('restaurants', {

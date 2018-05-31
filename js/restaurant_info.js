@@ -38,6 +38,19 @@ fetchReviews = () => {
     fillReviewsHTML();
   });
 }
+/*
+ * set favorite button
+ */
+setFavoriteButton = (status) => {
+  const favorite = document.getElementById('favBtn');
+  if (status === 'true') {
+    favorite.title = 'Restaurant is Favorite';
+    favorite.innerHTML = '⭐️ Mark as Unfavorite';
+  } else {
+    favorite.title = 'Restaurant is not Favorite';
+    favorite.innerHTML = '☆ Mark as Favorite';
+  }
+}
 /**
  * Get current restaurant from page URL.
  */
@@ -69,6 +82,8 @@ fetchRestaurantFromURL = (callback) => {
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
+// favorite
+setFavoriteButton(restaurant.is_favorite);
 
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
@@ -206,6 +221,31 @@ navigator.serviceWorker.ready.then(function (swRegistration) {
       });
     });
     // finish
+  });
+});
+
+/* Managing favorites */
+navigator.serviceWorker.ready.then(function (swRegistration) {
+  let btn = document.getElementById('favBtn');
+  // listen to click event
+  btn.addEventListener('click', e => {
+    const opposite = (self.restaurant.is_favorite === 'true') ? 'false' : 'true';
+    console.log('clicked');
+    let res = {
+      resId: getParameterByName('id'),
+      favorite: opposite
+    };
+    // save to DB
+    DBHelper.openDatabase().then(function(db){
+      var transaction = db.transaction('favorite', 'readwrite');
+      return transaction.objectStore('favorite').put(res);
+    }).then(function () {
+      setFavoriteButton(opposite);
+      self.restaurant.is_favorite = opposite;
+      return swRegistration.sync.register('favorite').then(() => {
+        console.log('Favorite Sync registered');
+      });
+    });
   });
 });
 
