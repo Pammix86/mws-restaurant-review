@@ -117,7 +117,7 @@ self.addEventListener('sync', function (e) {
   if (e.tag === 'sync') {
     e.waitUntil(
       sendReviews().then(() => {
-        console.log('synced')
+        console.log('Review synced')
       }).catch(err => {
         console.log(err, 'No Network connection, data will be syncing when online ')
       })
@@ -125,9 +125,9 @@ self.addEventListener('sync', function (e) {
   } else if (e.tag === 'favorite') {
     e.waitUntil(
       sendFavorites().then(() => {
-        console.log('favorites synced');
+        console.log('Favorites synced');
       }).catch(err => {
-        console.log(err, 'error syncing favorites');
+        console.log(err, 'No Network connection, data will be syncing when online');
       })
     );
   }
@@ -174,7 +174,7 @@ function sendFavorites() {
     return Promise.all(items.map(item => {
       let id = item.id;
       // delete review.id;
-      console.log("sending favorite", item);
+      console.log("Sending favorite...", item);
       // POST review
       return fetch(`http://localhost:1337/restaurants/${item.resId}/?is_favorite=${item.favorite}`, {
         method: 'PUT'
@@ -182,7 +182,7 @@ function sendFavorites() {
         console.log(response);
         return response.json();
       }).then(data => {
-        console.log('added favorite', data);
+        console.log('Added favorite', data);
         if (data) {
           // delete from db
           idb.open('Restaurant Reviews', 5).then(db => {

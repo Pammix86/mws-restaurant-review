@@ -184,10 +184,9 @@ createReviewHTML = (review) => {
   return li;
 }
 
-/* Managing reviews */
+/*** Reviews ***/
 navigator.serviceWorker.ready.then(function (swRegistration) {
   let form = document.querySelector('#review-form');
-  // listen to submit event
   form.addEventListener('submit', e => {
     e.preventDefault();
     let rating = form.querySelector('#rating');
@@ -197,9 +196,6 @@ navigator.serviceWorker.ready.then(function (swRegistration) {
       rating: rating.options[rating.selectedIndex].value,
       comments: form.querySelector('#comment').value
     };
-    console.log(review);
-    // save to DB
-    
     DBHelper.openDatabase().then(function(db){
       var transaction = db.transaction('outbox', 'readwrite');
       return transaction.objectStore('outbox').put(review);
@@ -211,32 +207,22 @@ navigator.serviceWorker.ready.then(function (swRegistration) {
         ul.appendChild(createReviewHTML(review));
       }
       form.reset();
-      //TODO Verificare 
-      // register for sync and clean up the form
       return swRegistration.sync.register('sync').then(() => {
         console.log('Sync registered');
-        // add review to view (for better UX)
-        // const ul = document.getElementById('reviews-list');
-        // review.createdAt = new Date();
-        // ul.appendChild(createReviewHTML(review));
       });
     });
-    // finish
   });
 });
 
-/* Managing favorites */
+/*** Favorites ***/
 navigator.serviceWorker.ready.then(function (swRegistration) {
   let btn = document.getElementById('favBtn');
-  // listen to click event
   btn.addEventListener('click', e => {
     const opposite = (self.restaurant.is_favorite === 'true') ? 'false' : 'true';
-    console.log('clicked');
     let res = {
       resId: getParameterByName('id'),
       favorite: opposite
     };
-    // save to DB
     DBHelper.openDatabase().then(function(db){
       var transaction = db.transaction('favorite', 'readwrite');
       return transaction.objectStore('favorite').put(res);
