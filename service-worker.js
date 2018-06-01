@@ -33,30 +33,18 @@ var filesToCache = [
 ];
 
 function openDatabase() {
-  return idb.open('Restaurant Reviews', 5, (upgradeDBObject) => {
-    switch (upgradeDBObject.oldVersion) {
-      case 0:
-        upgradeDBObject.createObjectStore('restaurants', {
-          keyPath: 'id'
-        });
-      case 1:
-        upgradeDBObject.createObjectStore('restaurant-reviews', {
-          keyPath: 'id'
-        });
-      case 2:
-        upgradeDBObject.createObjectStore('outbox', {
-          autoIncrement: true,
-          keyPath: 'id'
-        });
-        case 3:
-        upgradeDBObject.createObjectStore('favorite', {
-          autoIncrement: true,
-          keyPath: 'id'
-        });  
-    }
-  })
-}
+  return idb.open('Restaurant Reviews',5, (upgradeDBObject) => {
+      switch (upgradeDBObject.oldVersion) {
+        case 0:
+        upgradeDBObject.createObjectStore('restaurants', {keyPath: 'id' });
+      
+        upgradeDBObject.createObjectStore('favorite', {  autoIncrement: true,  keyPath: 'id'});
 
+        upgradeDBObject.createObjectStore('outbox', { autoIncrement: true, keyPath: 'id' }); 
+    }
+  }
+  )
+}
 self.addEventListener('install', function (e) {
   console.log('[ServiceWorker] Install');
   e.waitUntil(
@@ -125,7 +113,7 @@ self.addEventListener('sync', function (e) {
   } else if (e.tag === 'favorite') {
     e.waitUntil(
       sendFavorites().then(() => {
-        console.log('Favorites synced');
+        console.log('favorites synced');
       }).catch(err => {
         console.log(err, 'No Network connection, data will be syncing when online');
       })
@@ -174,7 +162,7 @@ function sendFavorites() {
     return Promise.all(items.map(item => {
       let id = item.id;
       // delete review.id;
-      console.log("Sending favorite...", item);
+      console.log("sending favorite", item);
       // POST review
       return fetch(`http://localhost:1337/restaurants/${item.resId}/?is_favorite=${item.favorite}`, {
         method: 'PUT'
@@ -182,7 +170,7 @@ function sendFavorites() {
         console.log(response);
         return response.json();
       }).then(data => {
-        console.log('Added favorite', data);
+        console.log('added favorite', data);
         if (data) {
           // delete from db
           idb.open('Restaurant Reviews', 5).then(db => {
