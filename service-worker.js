@@ -35,12 +35,10 @@ var filesToCache = [
 function openDatabase() {
   return idb.open('Restaurant Reviews',5, (upgradeDBObject) => {
     
-       switch (upgradeDBObject.oldVersion) {
-         case 0:
         upgradeDBObject.createObjectStore('restaurants', {keyPath: 'id' });
         upgradeDBObject.createObjectStore('favorite', {autoIncrement: true, keyPath: 'id'});
         upgradeDBObject.createObjectStore('outbox', { autoIncrement: true, keyPath: 'id' }); 
-     }
+     
   });
 }
 self.addEventListener('install', function (e) {
