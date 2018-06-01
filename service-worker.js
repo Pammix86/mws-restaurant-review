@@ -34,16 +34,14 @@ var filesToCache = [
 
 function openDatabase() {
   return idb.open('Restaurant Reviews',5, (upgradeDBObject) => {
-      switch (upgradeDBObject.oldVersion) {
-        case 0:
+    
+       switch (upgradeDBObject.oldVersion) {
+         case 0:
         upgradeDBObject.createObjectStore('restaurants', {keyPath: 'id' });
-      
-        upgradeDBObject.createObjectStore('favorite', {  autoIncrement: true,  keyPath: 'id'});
-
+        upgradeDBObject.createObjectStore('favorite', {autoIncrement: true, keyPath: 'id'});
         upgradeDBObject.createObjectStore('outbox', { autoIncrement: true, keyPath: 'id' }); 
-    }
-  }
-  )
+     }
+  });
 }
 self.addEventListener('install', function (e) {
   console.log('[ServiceWorker] Install');
@@ -71,14 +69,15 @@ self.addEventListener('activate', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
-  console.log('[ServiceWorker] Fetch', e.request.url);
+ 
   e.respondWith(
     caches.match(e.request).then(function (response) {
       if (response) {
-        console.log('Found ', e.request.url, ' in cache');
+        console.log('[ServiceWorker] Found ', e.request.url, ' in cache');
         return response;
       }
       return response || fetch(e.request);
+      console.log('[ServiceWorker] Fetch', e.request.url);
     })
   );
   openDatabase().then(db => {
