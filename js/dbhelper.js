@@ -66,14 +66,12 @@ class DBHelper {
       // We need to update the cache with fetching restaurants from network.
       fetch(DBHelper.DATABASE_URL , {credentials:'same-origin'})
       .then(res => {
-        console.log('res fetched is: ', res);
+       
         return res.json()})
       .then(data => {
         dbPromise.then(function(db){
           if(!db) return db;
-          console.log('data fetched is: ', data);
-
-
+         
           var tx = db.transaction('restaurants' , 'readwrite');
           var store = tx.objectStore('restaurants');
 
@@ -101,20 +99,6 @@ class DBHelper {
    * Fetch a restaurant by its ID.
    */
   static fetchRestaurantById(id, callback) {
-    // fetch all restaurants with proper error handling.
-    // DBHelper.fetchRestaurants((error, restaurants) => {
-    //   if (error) {
-    //     callback(error, null);
-    //   } else {
-    //     const restaurant = restaurants.find(r => r.id == id);
-    //     if (restaurant) { // Got the restaurant
-    //       callback(null, restaurant);
-    //     } else { // Restaurant does not exist in the database
-    //       callback('Restaurant does not exist', null);
-    //     }
-    //   }
-    // });
-
     // ** Using fetch API *** //
     fetch(`${DBHelper.DATABASE_URL}${id}`).then(response => {
       if (response){
