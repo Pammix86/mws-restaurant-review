@@ -28,13 +28,6 @@ gulp.task('es6', function() {
     .pipe(source('bundle.js'))
     .pipe(gulp.dest(''));
 });
-gulp.task('default', function() {
-
-  browserSync.init({
-    server: './'
-  });
-});
-
 
 gulp.task('images-process', function() {
   return gulp.src('images/*')
@@ -54,15 +47,16 @@ gulp.task('webserver', function() {
       open: true,
     }));
   });
+
   gulp.task('lint', function () {
     return gulp.src(['js/**/*.js'])
       .pipe(eslint())
       .pipe(eslint.format())
       .pipe(eslint.failOnError());
   });
-  
+
 gulp.task('watch',function() {
 	gulp.watch('**/*.js',['es6'])
 });
- 
-gulp.task('default', ['watch']);
+
+gulp.task('default', gulp.series('webserver'));
