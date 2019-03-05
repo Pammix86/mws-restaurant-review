@@ -127,11 +127,12 @@ header nav h1 a {
 }
 
 #breadcrumb {
-  padding: 0;
   list-style: none;
   background-color: #eee;
   margin: 0;
   height: 45px;
+  padding-top: 9px;
+  padding-left: 20px;
 }
 
 /* Display list items side by side */
@@ -262,7 +263,7 @@ header nav h1 a {
   font-size: 11pt;
 }
 #restaurants-list li a {
-  background-color: #125b8a;
+  background-color: #3397db;
   border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;
@@ -452,7 +453,7 @@ header nav h1 a {
 }
 
 #submit {
-  background-color: #125b8a;
+  background-color: #3397db;
   border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;

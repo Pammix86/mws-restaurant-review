@@ -93,6 +93,7 @@ fetchRestaurantFromURL = callback => {
         return;
       }
       initMap(restaurant);
+      fillBreadcrumb(restaurant);
       fillRestaurantHTML();
       // callback(null, restaurant);
     });
@@ -269,7 +270,7 @@ navigator.serviceWorker.ready.then(function(swRegistration) {
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
-fillBreadcrumb = (restaurant = self.restaurant) => {
+fillBreadcrumb = restaurant => {
   const breadcrumb = document.getElementById("breadcrumb");
   const li = document.createElement("li");
   li.innerHTML = restaurant.name;
