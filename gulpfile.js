@@ -1,67 +1,68 @@
-/**
- * Gulpfile to make my life easier.
- */
-var gulp = require("gulp");
-var sass = require("gulp-sass");
-var autoprefixer = require("gulp-autoprefixer");
-var browserify = require("browserify");
-var eslint = require("gulp-eslint");
-var uglify = require("gulp-uglify");
-var babel = require("gulp-babel");
-var babelify = require("babelify");
-var source = require("vinyl-source-stream");
-var sourcemaps = require("gulp-sourcemaps");
-var gutil = require("gulp-util");
-var imagemin = require("gulp-imagemin");
-var pngquant = require("imagemin-pngquant");
-var webserver = require("gulp-webserver");
-var browserSync = require("browser-sync").create();
+const gulp = require("gulp");
+const sass = require("gulp-sass");
+const browserSync = require("browser-sync").create();
+const useref = require("gulp-useref");
+const gulpif = require("gulp-if");
+const csso = require("gulp-csso");
+const autoprefixer = require("gulp-autoprefixer");
+const uglify = require("gulp-uglify");
+const babel = require("gulp-babel");
 
-gulp.task("es6", function() {
-  browserify({
-    entries: ["js/main.js", "js/dbhelper.js", "./service-worker.js"],
-    debug: true
-  })
-    .transform(babelify, { presets: ["es2015"] })
-    .bundle()
-    .on("error", gutil.log)
-    .pipe(source("bundle.js"))
-    .pipe(gulp.dest(""));
-});
-
-gulp.task("images-process", function() {
+gulp.task("sass", function() {
   return gulp
-    .src("images/*")
-    .pipe(
-      imagemin({
-        progressive: true,
-        use: [pngquant()]
-      })
-    )
-    .pipe(gulp.dest("dist/images"));
-});
-
-gulp.task("webserver", function() {
-  gulp.src("./").pipe(
-    webserver({
-      host: "localhost",
-      port: 3000,
-      livereload: true,
-      open: true
-    })
-  );
-});
-
-gulp.task("lint", function() {
-  return gulp
-    .src(["js/**/*.js"])
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failOnError());
+    .src("/scss/main.scss")
+    .pipe(sass())
+    .pipe(autoprefixer())
+    .pipe(gulp.dest("src/css"));
 });
 
 gulp.task("watch", function() {
-  gulp.watch("**/*.js", ["es6"]);
+  gulp.watch("scss/**/*.scss", gulp.series("sass", "reload"));
+  // gulp.watch("**/*.{html,js,css}", gulp.series("reload"));
+  gulp.watch("**/*.{html,js,css}");
 });
 
-gulp.task("default", gulp.series("webserver"));
+gulp.task("serve", function() {
+  browserSync.init({
+    server: "./",
+    port: 4000
+  });
+});
+//Browser Reload Function
+gulp.task("reload", function(done) {
+  browserSync.reload();
+  done();
+});
+
+gulp.task("es6", function() {
+  return gulp
+    .src(["node_modules/babel-polyfill/dist/polyfill.js", "js/*.js"])
+    .pipe(babel({ presets: ["es2015"] }))
+    .pipe(gulp.dest("dist/js"));
+});
+
+//Copy images in dist folder
+gulp.task("images", function() {
+  return gulp.src("images/**/*").pipe(gulp.dest("dist/images"));
+});
+
+//Minify CSS
+gulp.task("minifyCSS", function() {
+  return gulp
+    .src("css/*.css")
+    .pipe(csso())
+    .pipe(gulp.dest("dist/css"));
+});
+
+gulp.task("useref", function() {
+  return (
+    gulp
+      .src(["*.html", "manifest.json", "service-Worker.js"])
+      // .pipe(useref())
+      //.pipe(gulpif("compiled/*.js", uglify()))
+      .pipe(gulp.dest("dist"))
+  );
+});
+
+gulp.task("default", gulp.parallel("serve", "watch"));
+gulp.task("build", gulp.series("es6", "useref", "images", "minifyCSS"));
