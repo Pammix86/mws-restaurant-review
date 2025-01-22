@@ -1,10 +1,13 @@
+name: Print Message Every 2 Minutes
+
 on:
   schedule:
-    - cron: '*/2 * * * *'
+    - cron: "*/2 * * * *" # Esegui ogni 2 minuti
 
 jobs:
-  hello_world:
+  print-message:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Echo current time
-        run: echo "The current server time is $(date)"
+      - name: Print a message
+        run: echo "Questo è un messaggio stampato ogni 2 minuti."
